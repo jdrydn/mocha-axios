@@ -1,5 +1,9 @@
 # mocha-axios
 
+[![NPM](https://badge.fury.io/js/mocha-axios.svg)](https://www.npmjs.com/package/mocha-axios)
+![Circle CI](https://circleci.com/gh/jdrydn/mocha-axios/tree/master.svg?style=shield)
+![Coverage Status](https://coveralls.io/repos/jdrydn/mocha-axios/badge.svg?branch=master&service=github)
+
 HTTP assertions for [mocha](#) using [axios](#).
 
 ## About
