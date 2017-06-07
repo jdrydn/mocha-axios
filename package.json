@@ -1,6 +1,6 @@
 {
   "name": "mocha-axios",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "http assertions for mocha using axios",
   "main": "integration.js",
   "scripts": {
@@ -17,7 +17,8 @@
     "url": "https://github.com/jdrydn/mocha-axios"
   },
   "files": [
-    "integration.js", "withModify.js"
+    "integration.js",
+    "withModify.js"
   ],
   "author": "James D <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
