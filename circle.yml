@@ -1,0 +1,10 @@
+machine:
+  environment:
+    NODE_ENV: testing
+  node:
+    version: 7.8.0
+  timezone: Atlantic/Reykjavik
+test:
+  override:
+    - npm run lint
+    - npm test
