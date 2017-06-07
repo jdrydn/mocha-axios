@@ -86,95 +86,79 @@ integration({
     // If you don't set the responseType in the req then JSON is assumed
     data: 'Hello, world!',
   },
+
+  // You can specify a before function, which can return a Promise, to execute before anything actually happens
+  before() {},
+  // And you can specify a after function, which can return a Promise, to execute after all assertions have been made
+  after() {},
 })
 ```
 
-## TODO
+## Extensions
 
-Support for before/after functions, especially for lazy Mocha usage, that accept promises (thanks to `await`):
+You can optionally write your own extensions for `mocha-axios`, by registering them globally like so:
 
 ```js
-integration({
-  app,
-  before() {
-    return changeUserPassword(1, 'correct-horse-battery-staple');
+const integration = require('mocha-axios');
+
+integration.with('auth', {
+  before(username, req) {
+    req.headers['x-auth-token'] = createSignedTokenFor(username);
   },
+});
+
+it('should fetch Malcom\'s inbox', integration({
+  app,
+  auth: 'tuckerm@gov.uk',
   req: {
-    method: 'POST',
-    url: '/login',
-    data: {
-      method: 'email',
-      email: 'james@jdrydn.com',
-      password: 'correct-horse-battery-staple',
-    },
+    method: 'GET',
+    url: '/user/2321/inbox',
   },
   res: {
     status: 200,
-    headers: {
-      'X-Auth-Token': 'e409413fd5b4bad63f0ee4093b0b0e9b',
+  },
+}));
+```
+
+### modify
+
+To make it easier to mock HTTP endpoints where the data may change over time, there's a way to mock certain values in
+the response data to fixed values. **Please note:** this will only overwrite values that have the same type, e.g.
+`strings` `numbers` etc, in order to correctly return errors regarding missing properties / unusual properties!
+
+This requires `lodash`, either the entire library (if you're already using it) or the two individually packaged
+`_.get` `_.set`, so don't forget to install them (with `--save-dev` if you're not going to use it yourself!)
+
+```js
+const integration = require('mocha-axios');
+
+// Set res-modify to anything you want
+integration.with('res-modify', require('mocha-axios/withModify'));
+
+it('should fetch a member profile', integration({
+  app,
+  req: {
+    method: 'GET',
+    url: '/member/2321/',
+  },
+  res: {
+    status: 200,
+    modify: {
+      'user.id': 'some-id',
+      'user.created_date': 'YESTERDAY',
     },
     data: {
       user: {
-        id: '1',
+        id: 1,
         username: 'jdrydn',
         created_date: 'YESTERDAY',
       },
     },
   },
-  after() {
-    return changeUserPassword(1, 'voice-occasionally-let-giving');
-  },
-})
+}));
 ```
 
-Support for custom properties, for common tasks like modifying the response object or mocking HTTP requests with
-[nock](https://npm.im/nock):
-
-```js
-integration({
-  app,
-  req: {
-    method: 'POST',
-    url: '/login',
-    data: {
-      method: 'email',
-      email: 'james@jdrydn.com',
-      password: 'correct-horse-battery-staple',
-    },
-  },
-  nock: {
-    hostname: 'localhost:9200',
-    req: {
-      method: 'GET',
-      url: '/production-index/user/1',
-    },
-    res: {
-      status: 200,
-      data: {
-        _id: 1,
-        _type: 'user',
-        _source: { username: 'jdrydn', created_date: 'Wed Jun 07 2017 11:12:12 GMT+0100 (BST)' },
-      },
-    },
-  },
-  modify: {
-    'user.created_date': 'YESTERDAY',
-  },
-  res: {
-    status: 200,
-    headers: {
-      'X-Auth-Token': 'e409413fd5b4bad63f0ee4093b0b0e9b',
-    },
-    data: {
-      user: {
-        id: '1',
-        username: 'jdrydn',
-        created_date: 'YESTERDAY',
-      },
-    },
-  },
-})
-```
+A list of known extensions is coming soon!
 
 ## More
 

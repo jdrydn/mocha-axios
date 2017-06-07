@@ -3,11 +3,12 @@ const axios = require('axios');
 const extend = require('deep-extend');
 const http = require('http');
 
-// const extensions = {
-//   beforeFns: {},
-//   props: [],
-//   afterFns: {},
-// };
+const extensions = {
+  beforeFns: {},
+  eachFns: {},
+  props: [],
+  afterFns: {},
+};
 
 module.exports = function (opts) {
   return async function () {
@@ -15,17 +16,17 @@ module.exports = function (opts) {
     if (!opts.req) throw new Error('Missing `req` from opts');
     if (!opts.res) throw new Error('Missing `res` from opts');
 
-    const req = extend({ responseType: 'json' }, opts.req);
-    // const to_extend = extensions.props.filter(prop => opts.hasOwnProperty(prop));
+    // Handle generic before() functions
+    if (typeof opts.before === 'function') await opts.before();
 
-    // if (to_extend.length) {
-    //   // Handle "before" items
-    //   for (const prop of to_extend) {
-    //     if (typeof extensions.beforeFns[prop] === 'function') {
-    //       await extensions.beforeFns[prop].call(null, opts[prop], req, opts); // eslint-disable-line no-await-in-loop
-    //     }
-    //   }
-    // }
+    const req = extend({ responseType: 'json' }, opts.defaults || {}, opts.req);
+
+    // Handle "before" items if the relevant property is found
+    for (const prop in extensions.beforeFns) {
+      if (opts.hasOwnProperty(prop) && typeof extensions.beforeFns[prop] === 'function') {
+        await extensions.beforeFns[prop].call(null, opts[prop], req, opts); // eslint-disable-line no-await-in-loop
+      }
+    }
 
     const server = await startServer(opts.app);
 
@@ -36,14 +37,20 @@ module.exports = function (opts) {
 
     server.close();
 
-    // if (to_extend.length) {
-    //   // Handle "after" items
-    //   for (const prop of to_extend) {
-    //     if (typeof extensions.afterFns[prop] === 'function') {
-    //       await extensions.afterFns[prop].call(null, opts[prop], req, opts); // eslint-disable-line no-await-in-loop
-    //     }
-    //   }
-    // }
+    // Handle "each" items on every request
+    for (const prop in extensions.eachFns) {
+      /* istanbul ignore else */
+      if (typeof extensions.eachFns[prop] === 'function') {
+        await extensions.eachFns[prop].call(null, req, res, opts); // eslint-disable-line no-await-in-loop
+      }
+    }
+
+    // Handle "after" items if the relevant property is found
+    for (const prop in extensions.afterFns) {
+      if (opts.hasOwnProperty(prop) && typeof extensions.afterFns[prop] === 'function') {
+        await extensions.afterFns[prop].call(null, opts[prop], req, opts); // eslint-disable-line no-await-in-loop
+      }
+    }
 
     if (opts.res.status) assert.equal(res.status, opts.res.status, 'Incorrect response status');
     if (opts.res.headers) assertResHeaders(res.headers, opts.res.headers);
@@ -52,6 +59,9 @@ module.exports = function (opts) {
       if (req.responseType === 'json') assert.deepEqual(res.data, opts.res.data, 'Incorrect response JSON');
       else assert.equal(res.data, opts.res.data, 'Incorrect response body');
     }
+
+    // Handle generic after() functions
+    if (typeof opts.after === 'function') await opts.after();
   };
 };
 
@@ -104,46 +114,16 @@ function assertResHeaders(actual, expected) {
   });
 }
 
-// module.exports.with = function (prop, { before, after }) {
-//   if (!prop || [ 'app', 'req', 'res' ].indexOf(prop) >= 0) throw new Error('Invalid property name');
-//   if (extensions.props.indexOf(prop) >= 0) throw new Error(`Property "${prop}" has already been registered`);
-//
-//   extensions.props.push(prop);
-//   if (typeof before === 'function') extensions.beforeFns[prop] = before;
-//   if (typeof after === 'function') extensions.afterFns[prop] = after;
-// };
+module.exports.with = function (prop, { before, after, each }) {
+  if (!prop || [ 'app', 'req', 'res' ].indexOf(prop) >= 0) throw new Error('Invalid property name');
 
-/**
-//////////
+  if (extensions.props.indexOf(prop) >= 0) throw new Error(`Property "${prop}" has already been registered`);
+  extensions.props.push(prop);
 
-// npm install --save-dev mocha-axios mocha-axios-nock
-
-integration.with('nock', {
-  before(value) {
-    // configure nock, returning values
-
-    return scope;
-  },
-});
-
-const _get = require('lodash/get');
-const _isPlainObject = require('lodash/isPlainObject');
-const _set = require('lodash/set');
-
-// npm install --save-dev mocha-axios mocha-axios-modify
-
-integration.with('modify', {
-  after(values, res, opts) {
-    // configure nock, returning values
-
-    if (res.data) {
-      for (var prop in values) if (values.hasOwnProperty(prop)) {
-        var value = _get(res.data, prop);
-        if (value === null) continue;
-        if (typeof value !== typeof values[prop]) continue;
-        _set(res.data, prop, values[prop]);
-      }
-    }
-  },
-});
- */
+  if (typeof each === 'function') {
+    extensions.eachFns[prop] = each;
+  } else {
+    if (typeof before === 'function') extensions.beforeFns[prop] = before;
+    if (typeof after === 'function') extensions.afterFns[prop] = after;
+  }
+};
