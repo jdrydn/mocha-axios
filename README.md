@@ -4,12 +4,12 @@
 [![Circle CI](https://circleci.com/gh/jdrydn/mocha-axios/tree/master.svg?style=shield)](https://circleci.com/gh/jdrydn/mocha-axios)
 [![Coverage Status](https://coveralls.io/repos/github/jdrydn/mocha-axios/badge.svg?branch=master)](https://coveralls.io/github/jdrydn/mocha-axios?branch=master)
 
-HTTP assertions for [mocha](#) using [axios](#).
+HTTP assertions for [mocha](https://www.npmjs.com/package/mocha) using [axios](https://www.npmjs.com/package/axios).
 
 ## About
 
 This is a simplified HTTP testing library designed to decrease the amount of time you spend writing end-to-end tests.
-Designed to drop into Mocha TDD tests, backed by [axios](#), written with ES6 `async/await`.
+Designed to drop into `mocha` tests, backed by `axios`, written with ES6 `async/await`.
 
 ## Installation
 
@@ -176,6 +176,6 @@ integration({
 })
 ```
 
-## Questions?
+## More
 
 - [Open an issue](https://github.com/jdrydn/mocha-axios) or [drop me a tweet](https://twitter.com/jdrydn) :sunglasses:
