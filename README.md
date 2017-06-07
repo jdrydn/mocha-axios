@@ -84,3 +84,94 @@ integration({
   },
 })
 ```
+
+## TODO
+
+Support for before/after functions, especially for lazy Mocha usage, that accept promises (thanks to `await`):
+
+```js
+integration({
+  app,
+  before() {
+    return changeUserPassword(1, 'correct-horse-battery-staple');
+  },
+  req: {
+    method: 'POST',
+    url: '/login',
+    data: {
+      method: 'email',
+      email: 'james@jdrydn.com',
+      password: 'correct-horse-battery-staple',
+    },
+  },
+  res: {
+    status: 200,
+    headers: {
+      'X-Auth-Token': 'e409413fd5b4bad63f0ee4093b0b0e9b',
+    },
+    data: {
+      user: {
+        id: '1',
+        username: 'jdrydn',
+        created_date: 'YESTERDAY',
+      },
+    },
+  },
+  after() {
+    return changeUserPassword(1, 'voice-occasionally-let-giving');
+  },
+})
+```
+
+Support for custom properties, for common tasks like modifying the response object or mocking HTTP requests with
+[nock](https://npm.im/nock):
+
+```js
+integration({
+  app,
+  req: {
+    method: 'POST',
+    url: '/login',
+    data: {
+      method: 'email',
+      email: 'james@jdrydn.com',
+      password: 'correct-horse-battery-staple',
+    },
+  },
+  nock: {
+    hostname: 'localhost:9200',
+    req: {
+      method: 'GET',
+      url: '/production-index/user/1',
+    },
+    res: {
+      status: 200,
+      data: {
+        _id: 1,
+        _type: 'user',
+        _source: { username: 'jdrydn', created_date: 'Wed Jun 07 2017 11:12:12 GMT+0100 (BST)' },
+      },
+    },
+  },
+  modify: {
+    'user.created_date': 'YESTERDAY',
+  },
+  res: {
+    status: 200,
+    headers: {
+      'X-Auth-Token': 'e409413fd5b4bad63f0ee4093b0b0e9b',
+    },
+    data: {
+      user: {
+        id: '1',
+        username: 'jdrydn',
+        created_date: 'YESTERDAY',
+      },
+    },
+  },
+})
+```
+
+## Questions?
+
+- [Open an issue](https://github.com/jdrydn/mocha-axios) or [drop me a tweet](https://twitter.com/jdrydn) :sunglasses:
