@@ -20,9 +20,9 @@ module.exports = function (opts) {
 
     // if (to_extend.length) {
     //   // Handle "before" items
-    //   for (let i = 0; i < to_extend.length; i += 1) {
-    //     if (typeof extensions.beforeFns[to_extend[i]] === 'function') {
-    //       await extensions.beforeFns[to_extend[i]].call(null, opts[to_extend[i]], req, opts); // eslint-disable-line no-await-in-loop
+    //   for (const prop of to_extend) {
+    //     if (typeof extensions.beforeFns[prop] === 'function') {
+    //       await extensions.beforeFns[prop].call(null, opts[prop], req, opts); // eslint-disable-line no-await-in-loop
     //     }
     //   }
     // }
@@ -38,9 +38,9 @@ module.exports = function (opts) {
 
     // if (to_extend.length) {
     //   // Handle "after" items
-    //   for (let i = 0; i < to_extend.length; i += 1) {
-    //     if (typeof extensions.afterFns[to_extend[i]] === 'function') {
-    //       await extensions.afterFns[to_extend[i]].call(null, opts[to_extend[i]], res, opts); // eslint-disable-line no-await-in-loop
+    //   for (const prop of to_extend) {
+    //     if (typeof extensions.afterFns[prop] === 'function') {
+    //       await extensions.afterFns[prop].call(null, opts[prop], req, opts); // eslint-disable-line no-await-in-loop
     //     }
     //   }
     // }
@@ -62,21 +62,21 @@ function startServer(app) {
     /* istanbul ignore next */
     const timer = setTimeout(() => onceError(new Error('Failed to start server')), 1000);
 
-    function onceListening() {
-      clearTimeout(timer);
-      server.removeListener('error', onceError);
-      resolve(server);
-    }
     /* istanbul ignore next */
     function onceError(err) {
       clearTimeout(timer);
       server.removeListener('listening', onceListening);
       reject(err);
     }
+    function onceListening() {
+      clearTimeout(timer);
+      server.removeListener('error', onceError);
+      resolve(server);
+    }
 
-    server.listen(0, '127.0.0.1');
-    server.once('listening', onceListening);
     server.once('error', onceError);
+    server.once('listening', onceListening);
+    server.listen(0, '127.0.0.1');
   });
 }
 

@@ -36,7 +36,7 @@ describe('some-awesome-API', function () {
       headers: {
         'X-Auth-Token': 'e409413fd5b4bad63f0ee4093b0b0e9b',
       },
-      body: {
+      data: {
         user: {
           id: '1',
           username: 'jdrydn',
@@ -47,7 +47,7 @@ describe('some-awesome-API', function () {
 });
 ```
 
-### In Detail
+## API
 
 ```js
 integration({
@@ -57,9 +57,13 @@ integration({
   app,
   // app: express(),
 
-  // The request object should be an axios compatible object
+  // The request object should be an object that can be dropped into axios
   // See https://www.npmjs.com/package/axios#request-config
-  req: { method: 'GET', url: '/' },
+  req: {
+    method: 'GET',
+    url: '/',
+    params: { one: 'two' },
+  },
 
   // The response object is a similar-ish axios response object
   res: {
@@ -75,6 +79,7 @@ integration({
     },
 
     // Include a data property to check the body of the response
+    // If you don't set the responseType in the req then JSON is assumed
     data: 'Hello, world!',
   },
 })
