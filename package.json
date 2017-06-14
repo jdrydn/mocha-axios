@@ -1,6 +1,6 @@
 {
   "name": "mocha-axios",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "http assertions for mocha using axios",
   "main": "integration.js",
   "scripts": {
