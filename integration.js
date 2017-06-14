@@ -16,10 +16,13 @@ module.exports = function (opts) {
     if (!opts.req) throw new Error('Missing `req` from opts');
     if (!opts.res) throw new Error('Missing `res` from opts');
 
-    // Handle generic before() functions
-    if (typeof opts.before === 'function') await opts.before();
-
     const req = extend({ responseType: 'json' }, opts.defaults || {}, opts.req);
+
+    // Handle generic before() functions
+    if (typeof opts.before === 'function') await opts.before({
+      req, res: null,
+      opts: Object.assign({}, opts, { before: null, after: null }),
+    });
 
     // Handle "before" items if the relevant property is found
     for (const prop in extensions.beforeFns) {
@@ -61,7 +64,10 @@ module.exports = function (opts) {
     }
 
     // Handle generic after() functions
-    if (typeof opts.after === 'function') await opts.after();
+    if (typeof opts.after === 'function') await opts.after({
+      req, res,
+      opts: Object.assign({}, opts, { before: null, after: null }),
+    });
   };
 };
 
