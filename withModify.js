@@ -18,7 +18,10 @@ const { _get, _set } = (function fetchLodashFunctions() { // eslint-disable-line
 module.exports.each = function (req, res, opts) {
   if (req.responseType !== 'json' || !res.data || !_get(opts, 'res.modify')) return;
 
-  const modify = _get(opts, 'res.modify');
+  let modify = _get(opts, 'res.modify');
+  if (typeof modify === 'function') modify = modify(res.data);
+  if (typeof modify !== 'object') throw new Error('Invalid type for modify object');
+
   for (var prop in modify) {
     /* istanbul ignore else */
     if (modify.hasOwnProperty(prop)) {
