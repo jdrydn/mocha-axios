@@ -2,6 +2,7 @@ const assert = require('assert');
 const axios = require('axios');
 const extend = require('deep-extend');
 const http = require('http');
+const ms = require('ms');
 
 const extensions = {
   beforeFns: {},
@@ -15,6 +16,9 @@ module.exports = function (opts) {
     if (!opts || !opts.app) throw new Error('Missing `app` from opts');
     if (!opts.req) throw new Error('Missing `req` from opts');
     if (!opts.res) throw new Error('Missing `res` from opts');
+
+    // If this test needs to adjust it's timeout
+    if (opts.timeout) this.timeout(ms(opts.timeout));
 
     const req = extend({ responseType: 'json' }, opts.defaults || {}, opts.req);
 
