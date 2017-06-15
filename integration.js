@@ -39,6 +39,7 @@ module.exports = function (opts) {
 
     const res = await axios.request(Object.assign(req, {
       baseURL: `http://127.0.0.1:${server.address().port}/`,
+      maxRedirects: 0,
       validateStatus: null,
     }));
 
