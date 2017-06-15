@@ -18,7 +18,7 @@ module.exports = function (opts) {
     if (!opts.res) throw new Error('Missing `res` from opts');
 
     // If this test needs to adjust it's timeout
-    if (opts.timeout) this.timeout(ms(opts.timeout));
+    if (opts.timeout) this.timeout(ms(opts.timeout)); // eslint-disable-line no-invalid-this
 
     const req = extend({ responseType: 'json' }, opts.defaults || {}, opts.req);
 
