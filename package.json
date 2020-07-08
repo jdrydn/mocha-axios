@@ -4,12 +4,9 @@
   "description": "http assertions for mocha using axios",
   "main": "integration.js",
   "scripts": {
-    "coveralls": "cat coverage/lcov.info | coveralls",
     "lint": "eslint .",
-    "pretest": "npm run lint",
-    "posttest": "istanbul check-coverage",
-    "test": "istanbul cover -x *.test.js _mocha -- *.test.js",
-    "preversion": "npm test",
+    "test": "nyc --reporter lcov --reporter text --exclude *.test.js mocha *.test.js",
+    "preversion": "npm run lint && npm test",
     "postversion": "git push && git push --tags"
   },
   "repository": {
@@ -33,10 +30,9 @@
     "eslint": "^3.19.0",
     "eslint-plugin-mocha": "^4.9.0",
     "express": "^4.15.3",
-    "istanbul": "^1.1.0-alpha.1",
-    "lodash.get": "^4.4.2",
-    "lodash.set": "^4.3.2",
-    "mocha": "^3.4.2"
+    "lodash": "^4.17.15",
+    "mocha": "^3.4.2",
+    "nyc": "^15.1.0"
   },
   "engines": {
     "node": ">=7.8.0"
