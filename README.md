@@ -1,8 +1,7 @@
 # mocha-axios
 
 [![NPM](https://badge.fury.io/js/mocha-axios.svg)](https://www.npmjs.com/package/mocha-axios)
-[![Circle CI](https://circleci.com/gh/jdrydn/mocha-axios/tree/master.svg?style=shield)](https://circleci.com/gh/jdrydn/mocha-axios)
-[![Coverage Status](https://coveralls.io/repos/github/jdrydn/mocha-axios/badge.svg?branch=master)](https://coveralls.io/github/jdrydn/mocha-axios?branch=master)
+[![Tests](https://github.com/jdrydn/mocha-axios/workflows/Tests/badge.svg?branch=master&event=push)](https://github.com/jdrydn/mocha-axios/actions)
 
 HTTP assertions for [mocha](https://www.npmjs.com/package/mocha) using [axios](https://www.npmjs.com/package/axios).
 
