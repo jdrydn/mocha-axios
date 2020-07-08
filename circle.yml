@@ -1,9 +1,0 @@
-machine:
-  environment:
-    NODE_ENV: testing
-  node:
-    version: 7.8.0
-  timezone: Europe/London
-test:
-  post:
-    - npm run coveralls
