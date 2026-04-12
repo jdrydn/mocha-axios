@@ -3,6 +3,9 @@
 [![NPM](https://badge.fury.io/js/mocha-axios.svg)](https://www.npmjs.com/package/mocha-axios)
 [![Tests](https://github.com/jdrydn/mocha-axios/workflows/Tests/badge.svg?branch=master&event=push)](https://github.com/jdrydn/mocha-axios/actions)
 
+> [!WARNING]
+> **No longer maintained** - replaced with <https://wiki.jdrydn.com/entries/integration-testing-against-apis>
+
 HTTP assertions for [mocha](https://www.npmjs.com/package/mocha) using [axios](https://www.npmjs.com/package/axios).
 
 ## About
